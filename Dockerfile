@@ -19,10 +19,6 @@ WORKDIR /usr/src/
 COPY package.json .
 RUN npm install
 
-RUN npm install -g gulp
-
-
-
 # Bundle app source
 COPY . .
 
