@@ -12,6 +12,9 @@
             txt.innerHTML = '{{this.item_record_id}}';
             var record_num = txt.value;
 
+            txt.innerHTML = '{{this.record_num}}';
+            var course_num = txt.value;
+
             txt.innerHTML = '{{this.content}}';
             var instructor = txt.value;
 
@@ -24,6 +27,7 @@
             items.push({
                 id: {{@index}},
                 record_num: record_num,
+                course_num: course_num,
                 instructor: instructor,
                 course: course,
                 title: title
@@ -34,10 +38,12 @@
         $scope.items = {}
 
         items.forEach((item) => {
-            if (! $scope.items[item.course]) {
-                $scope.items[item.course] = {instructor: item.instructor, record_nums: [{record_num: item.record_num, title: item.title}], course: item.course}
+            if (! $scope.items[item.course_num]) {
+                $scope.items[item.course_num] = {instructor: item.instructor, record_nums: [{record_num: item.record_num, title: item.title}], course: [item.course]}
             } else {
-                $scope.items[item.course].record_nums.push({record_num: item.record_num, title: item.title})
+                let itemRecord = {record_num: item.record_num, title: item.title}
+                if (!$scope.items[item.course_num].course.includes(item.course)) $scope.items[item.course_num].course.push(item.course);
+                $scope.items[item.course_num].record_nums.push(itemRecord)
             }
         })
 
@@ -81,13 +87,17 @@
                         <table class="ui celled table">
                         <thead>
                             <tr><th>Instructor</th>
-                            <th>Course</th>
+                            <th>Course Name(s)</th>
                             <th>Items</th>
                         </tr></thead>
                         <tbody>
-                            <tr ng-repeat="item in items" ng-if="searchTerm && (item.instructor.toLowerCase().includes(searchTerm.toLowerCase()) || item.course.toLowerCase().includes(searchTerm.toLowerCase()))">
+                            <tr ng-repeat="item in items" ng-if="searchTerm && (item.instructor.toLowerCase().includes(searchTerm.toLowerCase()) || item.course.toString().toLowerCase().includes(searchTerm.toLowerCase()))">
                                 <td>{[{item.instructor}]}</td>
-                                <td>{[{item.course}]}</td>
+                                <td>
+                                    <ul>
+                                        <li ng-repeat="course in item.course">{[{course}]}</li>
+                                    </ul>
+                                </td>
                                 <td>
                                     <ul style="list-style-type:none">
                                         <li ng-repeat="record_num in item.record_nums"><a target='_blank' href="http://libcat.uncw.edu/record=i{[{record_num.record_num}]}">{[{record_num.title}]}</a></li>
