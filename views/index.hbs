@@ -30,6 +30,9 @@
             txt.innerHTML = '{{this.status}}';
             var status = txt.value;
 
+            txt.innerHTML = '{{this.call_number}}'
+            var call_number = txt.value;
+
             items.push({
                 id: {{@index}},
                 record_num: record_num,
@@ -38,7 +41,8 @@
                 course: course,
                 title: title,
                 location: location,
-                status: status
+                status: status,
+                call_number: call_number
             });
 
         {{/each}}
@@ -47,16 +51,22 @@
 
         items.forEach((item) => {
             if (! $scope.items[item.course_num]) {
+                console.log('new -- ' + item.course_num)
                 $scope.items[item.course_num] = {instructor: item.instructor, 
-                record_nums: [{record_num: item.record_num, title: item.title, location: item.location, status: item.status}], course: [item.course]}
+                record_nums: [{record_num: item.record_num, title: item.title, location: item.location, status: item.status, call_number: item.call_number}], course: [item.course]}
             } else {
-                let itemRecord = {record_num: item.record_num, title: item.title, location: item.location, status: item.status}
+                console.log('old -- ' + item.course_num) 
+                let itemRecord = {record_num: item.record_num, title: item.title, location: item.location, status: item.status, call_number: item.call_number}
                 if (!$scope.items[item.course_num].course.includes(item.course)) $scope.items[item.course_num].course.push(item.course);
-                $scope.items[item.course_num].record_nums.push(itemRecord)
+                var found = false;
+                $scope.items[item.course_num].record_nums.forEach((record) => {
+                    if (record.record_num == item.record_num)
+                        found = true;
+                });
+                
+                if (!found) $scope.items[item.course_num].record_nums.push(itemRecord)
             }
         })
-
-        console.log($scope.items)
 
         $scope.searchTerm = '';
     });
@@ -111,7 +121,8 @@
                                 <td>
                                     <ul style="list-style-type:none">
                                         <li ng-repeat="record_num in item.record_nums" style="margin-bottom:5px;">
-                                            <a target='_blank' href="http://libcat.uncw.edu/record=i{[{record_num.record_num}]}">{[{record_num.title}]} -- {[{record_num.location}]} -- {[{record_num.status}]}</a>
+                                            <a target='_blank' href="http://libcat.uncw.edu/record=i{[{record_num.record_num}]}">{[{record_num.title}]} -- 
+                                            {[{record_num.location}]} -- {[{record_num.call_number}]} -- {[{record_num.status}]}</a>
                                         </li>
                                     </ul>
                                 </td>
