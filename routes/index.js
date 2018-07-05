@@ -9,28 +9,7 @@ router.get('/', function(req, res, next) {
   
   const sql = "" +
 
-  // "Select distinct varfield_view.record_num,content,field_content,sierra_view.course_record_item_record_link.item_record_id " +
-  // "from sierra_view.course_record " +
-
-  // "LEFT JOIN  sierra_view.course_record_item_record_link " +
-  // "ON sierra_view.course_record.record_id=sierra_view.course_record_item_record_link.course_record_id " +
-
-  // "LEFT JOIN sierra_view.varfield_view " +
-  // "ON sierra_view.varfield_view.record_id=course_record.id " +
-
-  // "LEFT JOIN sierra_view.subfield_view " +
-  // "ON sierra_view.subfield_view.record_id=sierra_view.course_record.id " +
-
-  // "where varfield_type_code='r' " +
-  // "and field_type_code='p' " +
-
-  // "and sierra_view.course_record_item_record_link.item_record_id is not null " +
-
-  // "order by varfield_view.record_num ";
-
-
-  "Select distinct sierra_view.course_record_item_record_link.item_record_id,varfield_view.record_num,content,field_content, " +
-  "sierra_view.bib_view.record_num as bibrecord, call_number,item_view.location_code,item_status_code, title " +
+  "Select distinct sierra_view.course_record_item_record_link.item_record_id,varfield_view.record_num,title,content,field_content,sierra_view.bib_view.record_num as bibrecord, call_number,item_view.location_code,location_name.name as location,item_status_property_myuser.name as status " +
   "from sierra_view.course_record " +
   
   "LEFT JOIN  sierra_view.course_record_item_record_link " +
@@ -55,13 +34,55 @@ router.get('/', function(req, res, next) {
   "LEFT JOIN sierra_view.item_record_property " +
   "ON sierra_view.item_record_property.item_record_id=sierra_view.item_view.id " +
   
+  "LEFT JOIN sierra_view.item_status_property_myuser " +
+  "ON sierra_view.item_status_property_myuser.code=sierra_view.item_view.item_status_code " +
+  
+  "LEFT JOIN sierra_view.location " +
+  "ON item_view.location_code=location.code " +
+  
+  "LEFT JOIN sierra_view.location_name " +
+  "ON location.id=location_name.location_id " +
   
   "where varfield_type_code='r' " +
   "and field_type_code='p' " +
   
   "and sierra_view.course_record_item_record_link.item_record_id is not null " +
   
-  "order by varfield_view.record_num " ;
+  "order by varfield_view.record_num";
+
+  // "Select distinct sierra_view.course_record_item_record_link.item_record_id,varfield_view.record_num,content,field_content, " +
+  // "sierra_view.bib_view.record_num as bibrecord, call_number,item_view.location_code,item_status_code, title " +
+  // "from sierra_view.course_record " +
+  
+  // "LEFT JOIN  sierra_view.course_record_item_record_link " +
+  // "ON sierra_view.course_record.record_id=sierra_view.course_record_item_record_link.course_record_id " +
+  
+  // "LEFT JOIN sierra_view.varfield_view " +
+  // "ON sierra_view.varfield_view.record_id=course_record.id " +
+  
+  // "LEFT JOIN sierra_view.subfield_view " +
+  // "ON sierra_view.subfield_view.record_id=sierra_view.course_record.id " +
+  
+  // "LEFT JOIN sierra_view.item_view " +
+  // "ON sierra_view.item_view.id=sierra_view.course_record_item_record_link.item_record_id " +
+  
+  // "LEFT JOIN sierra_view.bib_record_item_record_link " +
+  // "ON sierra_view.item_view.id=sierra_view.bib_record_item_record_link.item_record_id " +
+  
+  
+  // "LEFT JOIN sierra_view.bib_view " +
+  // "ON sierra_view.bib_record_item_record_link.bib_record_id=sierra_view.bib_view.id " +
+  
+  // "LEFT JOIN sierra_view.item_record_property " +
+  // "ON sierra_view.item_record_property.item_record_id=sierra_view.item_view.id " +
+  
+  
+  // "where varfield_type_code='r' " +
+  // "and field_type_code='p' " +
+  
+  // "and sierra_view.course_record_item_record_link.item_record_id is not null " +
+  
+  // "order by varfield_view.record_num " ;
 
 
   console.log('hit');

@@ -1,8 +1,11 @@
 body {
-  background-color: #007E79;
-  padding: 50px;
+  background-color: #fff;
 }
 
 a {
   color: #00B7FF;
+}
+
+.segment {
+  background: #FFFFFF url('/images/tile_vgradient.jpg') repeat-x scroll left top !important;
 }

@@ -24,13 +24,21 @@
             txt.innerHTML = '{{this.title}}';
             var title = txt.value;
 
+            txt.innerHTML = '{{this.location}}';
+            var location = txt.value;
+
+            txt.innerHTML = '{{this.status}}';
+            var status = txt.value;
+
             items.push({
                 id: {{@index}},
                 record_num: record_num,
                 course_num: course_num,
                 instructor: instructor,
                 course: course,
-                title: title
+                title: title,
+                location: location,
+                status: status
             });
 
         {{/each}}
@@ -39,9 +47,10 @@
 
         items.forEach((item) => {
             if (! $scope.items[item.course_num]) {
-                $scope.items[item.course_num] = {instructor: item.instructor, record_nums: [{record_num: item.record_num, title: item.title}], course: [item.course]}
+                $scope.items[item.course_num] = {instructor: item.instructor, 
+                record_nums: [{record_num: item.record_num, title: item.title, location: item.location, status: item.status}], course: [item.course]}
             } else {
-                let itemRecord = {record_num: item.record_num, title: item.title}
+                let itemRecord = {record_num: item.record_num, title: item.title, location: item.location, status: item.status}
                 if (!$scope.items[item.course_num].course.includes(item.course)) $scope.items[item.course_num].course.push(item.course);
                 $scope.items[item.course_num].record_nums.push(itemRecord)
             }
@@ -59,13 +68,14 @@
     });
 </script>
 
+
+<h1 class="ui header">{{title}}</h1>
 <div id="courseReserves" ng-app="courseReserves" ng-controller="test">
-    <div class="ui centered grid">
+    <div class="ui grid">
         <div class="row">
             <div class="sixteen wide mobile eight wide tablet four wide computer column">
                 <div class="column">
                     <div class="ui raised segment">
-                        <h1 class="ui dividing header">{{title}}</h1>
                         <form class="ui form">
                             <div class="field">
                                 <label>Search by course number or instructor name </label>
@@ -81,7 +91,7 @@
         </div>
 
         <div class="row">
-            <div class="sixteen wide mobile twelve wide tablet ten wide computer column">
+            <div class="sixteen wide column">
                 <div class="column">
                     <div class="ui raised segment">
                         <table class="ui celled table">
@@ -100,7 +110,9 @@
                                 </td>
                                 <td>
                                     <ul style="list-style-type:none">
-                                        <li ng-repeat="record_num in item.record_nums"><a target='_blank' href="http://libcat.uncw.edu/record=i{[{record_num.record_num}]}">{[{record_num.title}]}</a></li>
+                                        <li ng-repeat="record_num in item.record_nums" style="margin-bottom:5px;">
+                                            <a target='_blank' href="http://libcat.uncw.edu/record=i{[{record_num.record_num}]}">{[{record_num.title}]} -- {[{record_num.location}]} -- {[{record_num.status}]}</a>
+                                        </li>
                                     </ul>
                                 </td>
                             </tr>
