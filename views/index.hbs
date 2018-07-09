@@ -49,7 +49,7 @@
 
         $scope.items = {}
 
-        items.forEach((item) => {
+        items.forEach(function (item) {
             if (! $scope.items[item.course_num]) {
                 console.log('new -- ' + item.course_num)
                 $scope.items[item.course_num] = {instructor: item.instructor, 
@@ -57,9 +57,9 @@
             } else {
                 console.log('old -- ' + item.course_num) 
                 let itemRecord = {record_num: item.record_num, title: item.title, location: item.location, status: item.status, call_number: item.call_number}
-                if (!$scope.items[item.course_num].course.includes(item.course)) $scope.items[item.course_num].course.push(item.course);
+                if (!($scope.items[item.course_num].course.indexOf(item.course) >= 0)) $scope.items[item.course_num].course.push(item.course);
                 var found = false;
-                $scope.items[item.course_num].record_nums.forEach((record) => {
+                $scope.items[item.course_num].record_nums.forEach(function (record) {
                     if (record.record_num == item.record_num)
                         found = true;
                 });
@@ -111,7 +111,7 @@
                             <th>Items</th>
                         </tr></thead>
                         <tbody>
-                            <tr ng-repeat="item in items" ng-if="searchTerm && (item.instructor.toLowerCase().includes(searchTerm.toLowerCase()) || item.course.toString().toLowerCase().includes(searchTerm.toLowerCase()))">
+                            <tr ng-repeat="item in items" ng-if="searchTerm && (item.instructor.toLowerCase().indexOf(searchTerm.toLowerCase()) >= 0 || item.course.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) >= 0)">
                                 <td>{[{item.instructor}]}</td>
                                 <td>
                                     <ul>
