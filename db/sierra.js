@@ -1,7 +1,9 @@
 var pg = require('pg');
 
-//Connect to Sierra database using PostGres
-var client = new pg.Client({
+// create a connection pool to our Sierra database
+// The .query method will connect and release connections to the pool
+// so that we don't have to keep constant open connections
+var client = new pg.Pool({
     user: process.env.SIERRA_USER,
     password: process.env.SIERRA_PASS,
     database: 'iii',
@@ -9,9 +11,5 @@ var client = new pg.Client({
     host: 'sierra-db.uncw.edu',
     ssl: true,
 });
-
-client.connect();
-
-console.log('Connected to Sierra DB');
 
 module.exports = client;
