@@ -28,7 +28,7 @@
             var location = txt.value;
 
             txt.innerHTML = '{{this.status}}';
-            var status = txt.value;
+            var status = txt.value ? "AVAILABLE" : "NOT AVAILABLE";
 
             txt.innerHTML = '{{this.call_number}}'
             var call_number = txt.value;
