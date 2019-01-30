@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
   const sql = "" +
 
   "Select distinct sierra_view.course_record_item_record_link.item_record_id,varfield_view.record_num,title,content,field_content,sierra_view.bib_view.record_num as bibrecord, " +
-  "(REPLACE(REPLACE(item_record_property.call_number,\'|a\',\'\'),\'|b\',\' \')) as call_number,item_view.location_code,location_name.name as location,item_status_property_myuser.name as status " +
+  "(REPLACE(REPLACE(item_record_property.call_number,\'|a\',\'\'),\'|b\',\' \')) as call_number,item_view.location_code,location_name.name as location,item_record.is_available_at_library as status " +
   "from sierra_view.course_record " +
   
   "LEFT JOIN  sierra_view.course_record_item_record_link " +
@@ -28,15 +28,14 @@ router.get('/', function(req, res, next) {
   "LEFT JOIN sierra_view.bib_record_item_record_link " +
   "ON sierra_view.item_view.id=sierra_view.bib_record_item_record_link.item_record_id " +
   
-  
   "LEFT JOIN sierra_view.bib_view " +
   "ON sierra_view.bib_record_item_record_link.bib_record_id=sierra_view.bib_view.id " +
   
   "LEFT JOIN sierra_view.item_record_property " +
   "ON sierra_view.item_record_property.item_record_id=sierra_view.item_view.id " +
   
-  "LEFT JOIN sierra_view.item_status_property_myuser " +
-  "ON sierra_view.item_status_property_myuser.code=sierra_view.item_view.item_status_code " +
+  "LEFT JOIN sierra_view.item_record " +
+  "ON sierra_view.item_record.id=sierra_view.item_view.id " +
   
   "LEFT JOIN sierra_view.location " +
   "ON item_view.location_code=location.code " +
