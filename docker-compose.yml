@@ -1,9 +1,13 @@
-version: '2'
+version: '3.7'
 services:
   course-reserves:
+    build: .
+    container_name: course-reserves
     image: libapps-admin.uncw.edu:8000/randall-dev/course-reserves
+    ports:
+      - "3000:3000"
+    env_file: .env
+    volumes:
+      - ./app/:/usr/src/app/
+    command: npm run dev
     restart: always
-    environment:
-      SIERRA_USER: ChangeMe!
-      SIERRA_PASS: ChangeMe!
-      NODE_ENV: production
