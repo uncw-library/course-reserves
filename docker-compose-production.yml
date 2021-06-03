@@ -1,0 +1,9 @@
+version: '2'
+services:
+  course-reserves:
+    image: libapps-admin.uncw.edu:8000/randall-dev/course-reserves
+    restart: always
+    environment:
+      SIERRA_USER: ChangeMe!
+      SIERRA_PASS: ChangeMe!
+      NODE_ENV: production
