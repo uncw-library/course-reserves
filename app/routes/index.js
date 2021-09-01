@@ -46,14 +46,10 @@ router.get('/', function (req, res, next) {
 
   sierra.query(sql)
     .then(result => {
-      console.log('finished')
       res.render('index', { title: 'Course Reserves Search', items: result.rows })
     })
     .catch(next)
 })
-
-module.exports = router
-
 
 router.get('/updated/', async function (req, res, next) {
   const sql = `
@@ -96,7 +92,10 @@ router.get('/updated/', async function (req, res, next) {
     `
   const result = await sierra.query(sql)
     .catch(next)
-  const nested = nest_items(result.rows)
+  if (!result) {
+    return
+  }
+  const nested = nest_courses(result.rows)
   const data = {
     title: 'Course Reserves Search',
     items: nested
@@ -104,48 +103,67 @@ router.get('/updated/', async function (req, res, next) {
   res.render('non-angular', data)
 })
 
-function nest_items(rows) {
-  /* an example rows item:
-    {
-      "bibrecord": 2984379,
-      "call_number": "CRM/SOC 255",
-      "content": "Day, Jacob",
-      "field_content": "Criminology/Sociology 255",
-      "item_record_id": "450975028601",
-      "location": "Course Reserves",
-      "location_code": "wvi",
-      "record_num": 1005855,
-      "status": true,
-      "title": "The Politics of Injustice: crime and punishment in America",
-    },
-  */
-
+function nest_courses(rows) {
   const nested = {}
   for (item of rows) {
-    // add the faculty if nested doesn't already have it
+    // set up datastructure
+    const course = item.record_num
+    if (!nested.hasOwnProperty(course)) {
+      nested[course] = {
+        fac: undefined,
+        courseName: [],
+        fullItems: []
+      }
+    }
+
     const fac = item.content
-    if (!nested.hasOwnProperty(fac)) {
-      nested[fac] = {}
+    nested[course]['fac'] = fac
+
+    // add the courseName if it is not already in nested
+    const courseName = item.field_content
+    if (!nested[course]['courseName'].includes(courseName)) {
+      nested[course]['courseName'].push(courseName)
     }
-    // add the course if the nested[fac] doesn't already have it
-    const course = item.call_number
-    if (!nested[fac].hasOwnProperty(course)) {
-      nested[fac][course] = []
-    }
-    // add the item's full details to the course
+
+    // add the fullItem if it is not already in nested
+    // deep compare the fullItem objects
     const fullItem = {
       bibRecord: item.bibrecord,
-      callNum: item.call_number,
-      courseName: item.field_content,
+      courseCode: item.call_number,
       itemRecordId: item.item_record_id,
       location: item.location,
-      locationCode: item.location_code,
       recordNum: item.record_num,
-      status: item.status,
+      status: (item.status) ? "Available" : "Checked Out",
       title: item.title
     }
-    nested[fac][course].push(fullItem)
+    let found = false
+    for (const i of nested[course]['fullItems']){
+      if (isEqual(i, fullItem)) {
+        found = true
+        break
+      }
+    }
+    if (!found) {
+      nested[course]['fullItems'].push(fullItem)
+    }
   }
-  console.log(nested)
+
   return nested
 }
+
+function isEqual(obj1, obj2) {
+  let props1 = Object.getOwnPropertyNames(obj1);
+  let props2 = Object.getOwnPropertyNames(obj2);
+  
+  if (props1.length != props2.length) {
+    return false
+  } 
+  for (prop of props1) {
+    if (obj1[prop] !== obj2[prop]) {
+      return false
+    }
+  }
+  return true;
+}
+
+module.exports = router
