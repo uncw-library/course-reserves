@@ -1,6 +1,23 @@
 <h1 class="ui header">{{title}}</h1>
 <div id="courseReserves" ng-app="courseReserves" ng-controller="test">
   <div class="ui grid">
+          <div class="row">
+            <div class="sixteen wide mobile eight wide tablet four wide computer column">
+                <div class="column">
+                    <div class="ui raised segment">
+                        <form action="/updated" method="POST" class="ui form">
+                            <div class="field">
+                                <label for="page-search">Search by course number or instructor name </label>
+                                <div class="field">
+                                    <input type="search" id="page-search" name="searchTerm" placeholder="{{searchString}}">
+                                    <button type="submit">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     <div class="row">
       <div class="sixteen wide column">
         <div class="column">
