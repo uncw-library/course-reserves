@@ -1,139 +1,66 @@
-<script>
-    var app = angular.module("courseReserves", []);
-
-    app.controller("test", function($scope) {
-        $scope.items = []
-
-            var items = []
-
-        {{#each items}}
-            var txt = document.createElement("textarea");
-
-            txt.innerHTML = '{{this.item_record_id}}';
-            var record_num = txt.value;
-
-            txt.innerHTML = '{{this.record_num}}';
-            var course_num = txt.value;
-
-            txt.innerHTML = '{{this.content}}';
-            var instructor = txt.value;
-
-            txt.innerHTML = '{{this.field_content}}';
-            var course = txt.value;
-
-            txt.innerHTML = '{{this.title}}';
-            var title = txt.value;
-
-            txt.innerHTML = '{{this.location}}';
-            var location = txt.value;
-
-            txt.innerHTML = '{{this.status}}';
-            var status = txt.value === "true" ? "AVAILABLE" : "NOT AVAILABLE";
-
-            txt.innerHTML = '{{this.call_number}}'
-            var call_number = txt.value;
-
-            items.push({
-                id: {{@index}},
-                record_num: record_num,
-                course_num: course_num,
-                instructor: instructor,
-                course: course,
-                title: title,
-                location: location,
-                status: status,
-                call_number: call_number
-            });
-
-        {{/each}}
-
-        $scope.items = {}
-
-        items.forEach(function (item) {
-            if (! $scope.items[item.course_num]) {
-                console.log('new -- ' + item.course_num)
-                $scope.items[item.course_num] = {instructor: item.instructor, 
-                record_nums: [{record_num: item.record_num, title: item.title, location: item.location, status: item.status, call_number: item.call_number}], course: [item.course]}
-            } else {
-                console.log('old -- ' + item.course_num) 
-                let itemRecord = {record_num: item.record_num, title: item.title, location: item.location, status: item.status, call_number: item.call_number}
-                if (!($scope.items[item.course_num].course.indexOf(item.course) >= 0)) $scope.items[item.course_num].course.push(item.course);
-                var found = false;
-                $scope.items[item.course_num].record_nums.forEach(function (record) {
-                    if (record.record_num == item.record_num)
-                        found = true;
-                });
-                
-                if (!found) $scope.items[item.course_num].record_nums.push(itemRecord)
-            }
-        })
-
-        $scope.searchTerm = '';
-    });
-
-    //Switch angular to use {[{}]} to not conflict with hbs
-    app.config(function($interpolateProvider) {
-        $interpolateProvider.startSymbol('{[{');
-        $interpolateProvider.endSymbol('}]}');
-    });
-</script>
-
-
 <h1 class="ui header">{{title}}</h1>
 <div id="courseReserves" ng-app="courseReserves" ng-controller="test">
-    <div class="ui grid">
-        <div class="row">
+  <div class="ui grid">
+          <div class="row">
             <div class="sixteen wide mobile eight wide tablet four wide computer column">
                 <div class="column">
                     <div class="ui raised segment">
-                        <form class="ui form">
+                        <form action="/" method="POST" class="ui form">
                             <div class="field">
-                                <label>Search by course number or instructor name </label>
+                                <label for="page-search">Search by course number or instructor name </label>
                                 <div class="field">
-                                    <input type="text" ng-model='searchTerm' name="course-reserves[search-term]" placeholder="Search term">
+                                    <input type="search" id="page-search" name="searchTerm" placeholder="{{searchString}}">
+                                    <button type="submit">Search</button>
                                 </div>
-
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="sixteen wide column">
-                <div class="column">
-                    <div class="ui raised segment">
-                        <table class="ui celled table">
-                        <thead>
-                            <tr><th>Instructor</th>
-                            <th>Course Name(s)</th>
-                            <th>Items</th>
-                        </tr></thead>
-                        <tbody>
-                            <tr ng-repeat="item in items" ng-if="searchTerm && (item.instructor.toLowerCase().indexOf(searchTerm.toLowerCase()) >= 0 || item.course.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) >= 0)">
-                                <td>{[{item.instructor}]}</td>
-                                <td>
-                                    <ul>
-                                        <li ng-repeat="course in item.course">{[{course}]}</li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul style="list-style-type:none">
-                                        <li ng-repeat="record_num in item.record_nums" style="margin-bottom:5px;">
-                                            <a target='_blank' href="http://libcat.uncw.edu/record=i{[{record_num.record_num}]}">{[{record_num.title}]} -- 
-                                            {[{record_num.location}]} -- {[{record_num.call_number}]} -- {[{record_num.status}]}</a>
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <div class="row">
+      <div class="sixteen wide column">
+        <div class="column">
+          <div class="ui raised segment">
+            <table class="ui celled table">
+              <thead>
+                <tr>
+                  <th>Instructor</th>
+                  <th>Course Name(s)</th>
+                  <th>Items</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each items as |bundle recordNum|}}
+                  <tr>
+                    <td>{{bundle.fac}}</td>
+                    <td>
+                      <ul>
+                        {{#each bundle.courseName as |record|}}
+                          <li>{{record}}</li>
+                        {{/each}}
+                      </ul>
+                    </td>
+                    <td>
+                      <ul style="list-style-type:none">
+                        {{#each bundle.fullItems as |item|}}
+                          <li style="margin-bottom:5px;">
+                            <a target='_blank' href="http://libcat.uncw.edu/record=i{{item.itemRecordId}}">
+                              {{item.title}} -- {{item.location}} -- {{item.courseCode}} -- {{item.status}}
+                            </a>
+                          </li>
+                        {{/each}}
+                      </ul>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 
